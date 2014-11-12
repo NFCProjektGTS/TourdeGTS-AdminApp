@@ -20,11 +20,17 @@ public class TagItemMagazine {
         tagItems = new ArrayList<TagItem>();
 
 
-        tagItems.add(new StartTagItem("Start Tag","Dies ist der Start Tag‏","gtsoffenbach.nfcgamespieler_appprototype"));
-        tagItems.add(new TagItem("Test01 Tag","Dies ist ein Test Tag."));
-        tagItems.add(new TagItem("Test02 Tag","Dies ist ein Test Tag."));
-        tagItems.add(new TagItem("Test03 Tag","Dies ist ein Test Tag."));
-        tagItems.add(new TagItem("Test04 Tag","Dies ist ein Test Tag."));
+        tagItems.add(new StartTagItem());
+        tagItems.add(new TagItem("Test01 Tag","Dies ist ein Test Tag(1).",1));
+        tagItems.add(new TagItem("Test02 Tag","Dies ist ein Test Tag(2).",2));
+        tagItems.add(new TagItem("Test03 Tag","Dies ist ein Test Tag(3).",3));
+        tagItems.add(new TagItem("Test04 Tag","Dies ist ein Test Tag(4).",4));
+        tagItems.add(new TagItem("Test05 Tag","Dies ist ein Test Tag(5).",5));
+        tagItems.add(new TagItem("Test06 Tag","Dies ist ein Test Tag(6).",6));
+        tagItems.add(new TagItem("Test07 Tag","Dies ist ein Test Tag(7).",7));
+        tagItems.add(new TagItem("Test08 Tag","Dies ist ein Test Tag(8).",8));
+        tagItems.add(new TagItem("Test09 Tag","Dies ist ein Test Tag(9).",9));
+        tagItems.add(new TagItem("Test10 Tag","Dies ist ein Test Tag(10).",10));
 
     }
 
@@ -44,5 +50,14 @@ public class TagItemMagazine {
      */
     public ArrayList<TagItem> getAllTagItems(){
         return tagItems;
+    }
+
+    public TagItem findTagItemByID(int ID){
+       for(int i = 0; i<tagItems.size();i++){
+           if(tagItems.get(i).getId()==ID){
+               return tagItems.get(i);
+           }
+       }
+       return null;
     }
 }

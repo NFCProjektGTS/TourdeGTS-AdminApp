@@ -1,9 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:textSize="20dp"
-    android:textColor="#ffdedede">
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/TagItemZeile">
 
-</TextView>
+    <TextView
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/textViewID"
+        android:textColor="#ffffffff"
+        android:textSize="25dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:paddingRight="20dp"
+        android:gravity="right"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_alignBottom="@+id/textViewName" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/textViewName"
+        android:textSize="25dp"
+        android:textColor="#ffffffff"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/textViewStrich"
+        android:paddingLeft="15dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp" />
+
+    <TextView
+        android:layout_width="6dp"
+        android:layout_height="63dp"
+        android:id="@+id/textViewStrich"
+        android:layout_alignBottom="@+id/textViewID"
+        android:layout_toRightOf="@+id/textViewID"
+        android:background="#ffffffff" />
+</RelativeLayout>

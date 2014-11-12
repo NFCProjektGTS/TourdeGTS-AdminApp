@@ -24,7 +24,7 @@ public class MainActivity extends ActionBarActivity {
 
     
    // public static NFCFramework framework;
-    private static  nfcManager nfcManager;
+    private nfcManager nfcManager;
     private CharSequence mTitle;
     private TagItemMagazine tagItemMagazine;
     public static AlertDialogAnimation dialogAnimation;
@@ -50,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
         return this.tagItemMagazine;
     }
 
-    public static nfcManager getNfcManager(){
+    public nfcManager getNfcManager(){
         return nfcManager;
     }
 

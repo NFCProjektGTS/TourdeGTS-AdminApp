@@ -24,11 +24,11 @@ public class PreviewTagItemDialog  implements View.OnClickListener {
     private ImageView bildvorschau;
     private TagItem selectedTagItem;
     private LayoutInflater inflater = null;
-    private Activity caller;
+    private final MainActivity mainActivity;
     private Button ButtonSchließen;
 
-    public PreviewTagItemDialog(Activity caller, int THEME, final TagItem selectedTagItem) {
-        this.caller = caller;
+    public PreviewTagItemDialog(MainActivity caller, int THEME, final TagItem selectedTagItem) {
+        this.mainActivity = caller;
         this.selectedTagItem = selectedTagItem;
         this.inflater = (LayoutInflater) caller.getSystemService(caller.LAYOUT_INFLATER_SERVICE);
         this.scanSelectedTagItem();
@@ -37,12 +37,12 @@ public class PreviewTagItemDialog  implements View.OnClickListener {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(caller);
         builder.setTitle(selectedTagItem.getName());
-        builder.setMessage("ID: " + selectedTagItem.getID() + System.getProperty("line.separator") + selectedTagItem.getBeschreibung());
+        builder.setMessage("ID: " + selectedTagItem.getId() + System.getProperty("line.separator") + selectedTagItem.getBeschreibung());
         builder.setPositiveButton("Schreiben", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
 
-                MainActivity.getNfcManager().write(selectedTagItem);
+                mainActivity.getNfcManager().write(selectedTagItem);
 
             }
         }).setNegativeButton("Schließen", new DialogInterface.OnClickListener() {
@@ -52,6 +52,8 @@ public class PreviewTagItemDialog  implements View.OnClickListener {
         });
         builder.show();
     }
+
+
 
     /*
     -diese Methode ist dazu da, zu überprüfen,

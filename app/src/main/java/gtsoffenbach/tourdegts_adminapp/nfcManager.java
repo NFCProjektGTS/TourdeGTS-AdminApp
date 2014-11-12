@@ -13,15 +13,36 @@ import android.nfc.TagLostException;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by Marlon on 23.07.2014.
  */
 public class nfcManager implements MainActivity.ActivityLifeCycleListener {
 
+    private static final String TAG = nfcManager.class.getSimpleName();
 
+    public static final int READ_WRITE_OK = 0;
+    public static final int WRITE_ERROR_READ_ONLY = 1;
+    public static final int WRITE_ERROR_CAPACITY = 2;
+    public static final int WRITE_ERROR_BAD_FORMAT = 3;
+    public static final int WRITE_ERROR_IO_EXCEPTION = 4;
+    public static final int WRITE_ERROR_TAG_LOST = 5;
+    public static final int WRITE_UNKNOWN_ERROR = 6;
+
+    public static final int READ_ERROR_IO_EXCEPTION = 10;
+    public static final int READ_ERROR_TAG_LOST = 11;
+    public static final int READ_UNKNOWN_ERROR = 12;
+    public static final int READ_UNKNOWN_TAGDATA = 13;
+    public static final int READ_ERROR_NO_NDEF_TAG = 14;
+
+
+
+
+    private TagItem lastReadTagItem;
 
     public enum Status {
         none,
@@ -29,6 +50,8 @@ public class nfcManager implements MainActivity.ActivityLifeCycleListener {
         NFC_Hardware_nicht_eingeschaltet,
         bereit_zum_schreiben,   //hat daten zum schreiben und wartet auf ein Tag
         schreibt,
+        liest,
+        lesen_Beendet,
         ready
     }
 
@@ -76,9 +99,9 @@ public class nfcManager implements MainActivity.ActivityLifeCycleListener {
         this.statusChangeListener = value;
     }
 
-    //todo: methode kommentieren
+
     /*
-     *diese Methode wird aufgerufen, wenn das Handy etwas auf einen Tag schrieben soll.
+     *diese Methode wird aufgerufen, wenn das Handy etwas auf einen Tag schreiben soll.
      * Beim aufruf der Methode, wird das zu schreibende TagItem mit übergeben.
      * Ebenso wird der Status von "ready" auf "bereit zum schreiben" gesetzt.
      */
@@ -89,11 +112,11 @@ public class nfcManager implements MainActivity.ActivityLifeCycleListener {
         }
     }
 
-    //todo: methode kommentieren
+
     /*
      *die Methode cancelWrite wird aufgerufen, wenn das Handy aufhören soll, auf ein Tag zu
      * warten, auf welches das TagItem geschrieben werden sollte.
-     * Ebenso wird der Status von "bereit zum schreiben" auf "gesetzt" gesetzt.
+     * Ebenso wird der Status von "bereit zum schreiben" auf "ready" gesetzt.
      */
     public void cancelWrite() {
         if (this.status == Status.bereit_zum_schreiben) {
@@ -109,9 +132,33 @@ public class nfcManager implements MainActivity.ActivityLifeCycleListener {
         }
     }
 
-    private void readTag() {
+    private void endRead(int readResult, TagItem readItem){
+        if (this.status == Status.liest){
+            if(readResult == READ_WRITE_OK){
+                Log.d(TAG,"lesen Erfolgreich");
+                this.lastReadTagItem = readItem;
+                this.setStatus(Status.lesen_Beendet);
+            }else{
+                Log.d(TAG,"FEHLER: "+readResult);
+                this.setStatus(Status.ready);
 
+            }
+        }
     }
+
+    public void finishRead(){
+        if(this.getStatus() == Status.lesen_Beendet){
+            this.lastReadTagItem = null;
+            this.setStatus(Status.ready);
+            enableForegroundDispatch();
+        }
+    }
+
+    public TagItem getLastReadTagItem(){
+        return this.lastReadTagItem;
+    }
+
+
 
     //todo: methode kommentieren
     /*
@@ -177,6 +224,8 @@ public class nfcManager implements MainActivity.ActivityLifeCycleListener {
     private void enableForegroundDispatch(){
         if(this.getStatus()==Status.ready){
             this.nfcAdapter.enableForegroundDispatch(this.activity, this.pendingIntent,this.intentFilters,this.techLists);
+        }else {
+            int i=0;
         }
     }
 
@@ -201,6 +250,7 @@ public class nfcManager implements MainActivity.ActivityLifeCycleListener {
     @Override
     public void onActivityNewIntent(Intent intent) {
         this.resolveIntent(intent);
+
     }
 
 
@@ -212,19 +262,23 @@ public class nfcManager implements MainActivity.ActivityLifeCycleListener {
     ==================
      */
     public void resolveIntent(Intent intent) {
+        Log.d("HALLO", "TEST");
+
+
         String action = intent.getAction();
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)
                 || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
 
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             NdefMessage[] msgs;
-            if (this.status == Status.bereit_zum_schreiben) {
-
-                Tag wTAG = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-                if (wTAG != null) {
+            Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            if (tag != null) {
+                if (this.status == Status.bereit_zum_schreiben) {
                     this.setStatus(Status.schreibt);
-                    writeTag(wTAG, this.createNdefMessage());
-
+                    writeTag(tag, this.createNdefMessage());
+                }else if(this.status == Status.ready){
+                    this.setStatus(Status.liest);
+                    this.readTag(tag);
                 }
             }
         }
@@ -233,30 +287,55 @@ public class nfcManager implements MainActivity.ActivityLifeCycleListener {
 
     private NdefMessage createNdefMessage(){
         try {
-        if(tagItem.getType()==1){
+        NdefRecord newRecord = null;
 
+        if(tagItem instanceof StartTagItem){
 
            String appname = ((StartTagItem) tagItem).getAddress();
-           NdefMessage msg;
-           NdefRecord rec = NdefRecord.createApplicationRecord(appname);
-           msg = new NdefMessage(rec);
-           System.out.println(appname);
-           return msg;
-
-
+           newRecord = NdefRecord.createApplicationRecord(appname);
 
         }else {
 
-
-            NdefRecord record = new NdefRecord(
-                    this.tagItem.getNfcTnf(), this.tagItem.getNfcType(), new byte[0], null);
-            NdefRecord[] records = new NdefRecord[]{record};
-            return new NdefMessage(records);
+            newRecord = new NdefRecord(
+                    this.tagItem.getNfcTnf(), this.tagItem.getNfcType(), new byte[0], new byte[0]);
         }
+            NdefRecord[] records = new NdefRecord[]{newRecord};
+            return new NdefMessage(records);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
         return getEmptyNdef();
+    }
+
+    private TagItem createTagItem(NdefMessage message)
+    {
+        TagItem tagitem = null;
+        if(message!=null){
+            NdefRecord[] records = message.getRecords();
+            if(records.length>0){
+                NdefRecord record = records[0];
+                if(record.getTnf()== NdefRecord.TNF_WELL_KNOWN){
+                    // es ist ein normales tagitem
+                    byte[] tagItemIdAsArray = record.getType();
+                    if(tagItemIdAsArray.length ==4){
+                        tagitem = new TagItem(nfcManager.byteArrayToInt(tagItemIdAsArray));
+                    }
+                }
+                else if(record.getTnf()== NdefRecord.TNF_EXTERNAL_TYPE) {
+                    // es ist wohl unser starttagitem
+                    StartTagItem test = new StartTagItem();
+                    NdefRecord testRecord = NdefRecord.createApplicationRecord(test.getAddress());
+                    if(Arrays.equals(testRecord.getType() , record.getType()) )
+                    {
+                        tagitem=test;
+                    }
+                }
+            }
+        }
+
+        return tagitem;
+
     }
 
     public static final NdefMessage getEmptyNdef() {
@@ -273,14 +352,14 @@ public class nfcManager implements MainActivity.ActivityLifeCycleListener {
             if (ndef != null) {
                 ndef.connect();
                 if (!ndef.isWritable()) {
-                    this.endWrite(OnTagWriteListener.WRITE_ERROR_READ_ONLY);
+                    this.endWrite(WRITE_ERROR_READ_ONLY);
                 }
                 else if (ndef.getMaxSize() < size) {
                     //Tag hat zu wenig Speicherplatz
-                    this.endWrite(OnTagWriteListener.WRITE_ERROR_CAPACITY);
+                    this.endWrite(WRITE_ERROR_CAPACITY);
                 }else {
                     ndef.writeNdefMessage(message);
-                    this.endWrite(OnTagWriteListener.WRITE_OK);
+                    this.endWrite(READ_WRITE_OK);
                 }
 
             } else {
@@ -289,26 +368,92 @@ public class nfcManager implements MainActivity.ActivityLifeCycleListener {
                     try {
                         format.connect();
                         format.format(message);
-                        this.endWrite(OnTagWriteListener.WRITE_OK);
+                        this.endWrite(READ_WRITE_OK);
                     } catch (IOException e) {
-                        this.endWrite(OnTagWriteListener.WRITE_ERROR_IO_EXCEPTION);
+                        this.endWrite(WRITE_ERROR_IO_EXCEPTION);
                     }
                 } else {
-                    this.endWrite(OnTagWriteListener.WRITE_ERROR_BAD_FORMAT);
+                    this.endWrite(WRITE_ERROR_BAD_FORMAT);
                 }
             }
         } catch (TagLostException e) {
-            this.endWrite(OnTagWriteListener.WRITE_ERROR_TAG_LOST);
+            this.endWrite(WRITE_ERROR_TAG_LOST);
             System.out.println("Failed to write. Tag out of range.");
         } catch (IOException e) {
-            this.endWrite(OnTagWriteListener.WRITE_ERROR_IO_EXCEPTION);
+            this.endWrite(WRITE_ERROR_IO_EXCEPTION);
             System.out.println("Failed to write. I/O Error");
         } catch (FormatException e) {
-            this.endWrite(OnTagWriteListener.WRITE_ERROR_BAD_FORMAT);
+            this.endWrite(WRITE_ERROR_BAD_FORMAT);
             System.out.println("Failed to write. Tag unformatable!");
         }
 
     }
 
+    private void readTag (Tag tag) {
+        Ndef ndef = null;
+        try {
+            ndef = Ndef.get(tag);
+            if (ndef != null) {
+                ndef.connect();
+                NdefMessage readMessage =  ndef.getCachedNdefMessage();
+                TagItem tagitem = this.createTagItem(readMessage);
+                if(tagitem!=null){
+                    endRead(READ_WRITE_OK,tagitem);
+                }else{
+                    endRead(READ_UNKNOWN_TAGDATA,null);
+                }
+
+            }else{
+                endRead(READ_ERROR_NO_NDEF_TAG,null);
+            }
+        } catch (TagLostException e) {
+            this.endRead(READ_ERROR_TAG_LOST,null);
+            //System.out.println("Failed to write. Tag out of range.");
+        } catch (IOException e) {
+            this.endRead(READ_ERROR_IO_EXCEPTION,null);
+            //System.out.println("Failed to write. I/O Error");
+        }catch (Exception e) {
+            this.endRead(READ_UNKNOWN_ERROR, null);
+        }
+
+        finally {
+            if(ndef!=null){
+                try {
+                    ndef.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+
+    /*
+    *Diese Methode wandelt das übergebene ByteArray in einen Integer um.
+    * Es werden die ersten 4 Bytes aus dem ByteArray verwendet.
+    * Bei im ByteArray weniger als 4 Bytes enthalten sind gibt es ein Fehler.
+    *
+     */
+    public static int byteArrayToInt(byte[] byteArray){
+       int value = 0;
+       for (int i = 0; i<4; i++){
+           int shift = (3-i)*8;
+           value += (byteArray[i]& 0x000000FF)<< shift;
+       }
+
+       return value;
+    }
+
+    public static byte[] intToByteArray(int a){
+
+        byte[] ret = new byte[4];
+        ret[3] = (byte) (a & 0xFF);
+        ret[2] = (byte) ((a >> 8) & 0xFF);
+        ret[1] = (byte) ((a >> 16) & 0xFF);
+        ret[0] = (byte) ((a >> 24) & 0xFF);
+
+        return ret;
+    }
 
 }

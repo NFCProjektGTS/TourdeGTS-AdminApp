@@ -9,19 +9,19 @@ import java.math.BigInteger;
  */
 public class TagItem  {
 
-    public TagItem(String name,String beschreibung){
+    public TagItem(String name,String beschreibung, int id){
         this.name = name;
         this.beschreibung = beschreibung;
-
-        this.ID = counter;
-        counter+=1;
+        this.id = id;
+    }
+    public TagItem(int id){
+        this("Name unbekannt","Beschreibung unbekannt",id);
     }
 
     private String name;
-    private int ID;
+    private int id;
     private String beschreibung;
-    static int counter = 0;
-    private short type = 0;
+
 
 
 
@@ -31,8 +31,8 @@ public class TagItem  {
         return this.name;
     }
 
-    public int getID() {
-        return  this.ID;
+    public int getId() {
+        return  this.id;
     }
 
     public String getBeschreibung(){
@@ -45,8 +45,8 @@ public class TagItem  {
     }
 
     public byte[] getNfcType(){
-        final BigInteger bi = BigInteger.valueOf(this.ID);
-        return bi.toByteArray();
+
+        return nfcManager.intToByteArray(this.getId());
     }
 
 
@@ -54,9 +54,6 @@ public class TagItem  {
 
     @Override
     public String toString() {
-        return "  "+getID()+" | "+getName();
-    }
-    public short getType(){
-        return type;
+        return "  "+ getId()+" | "+getName();
     }
 }

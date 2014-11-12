@@ -115,7 +115,7 @@ import java.math.BigInteger;
                     wTAG = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
                     if (wTAG != null && mWriteNdef[0] != null) {
                         int code = writeTag(wTAG, mWriteNdef[0]);
-                        System.out.println(OnTagWriteListener.onTagWrite(code));
+                        //System.out.println(OnTagWriteListener.onTagWrite(code));
                         if (MainActivity.dialogAnimation != null) {
                             MainActivity.dialogAnimation.closeDialog();
                         }
@@ -214,18 +214,18 @@ import java.math.BigInteger;
                     if (!ndef.isWritable()) {
                         System.out.println("READONLY");
                         disableWrite();
-                        return OnTagWriteListener.WRITE_ERROR_READ_ONLY;
+                       // return OnTagWriteListener.WRITE_ERROR_READ_ONLY;
                     }
                     if (ndef.getMaxSize() < size) {
                         System.out.println("Tag capacity is " + ndef.getMaxSize() + " bytes, message is " +
                                 size + " bytes.");
                         disableWrite();
-                        return OnTagWriteListener.WRITE_ERROR_CAPACITY;
+                      //  return OnTagWriteListener.WRITE_ERROR_CAPACITY;
                     }
 
                     ndef.writeNdefMessage(message);
                     disableWrite();
-                    return OnTagWriteListener.WRITE_OK;
+                   // return OnTagWriteListener.WRITE_OK;
                 } else {
                     NdefFormatable format = NdefFormatable.get(tag);
                     if (format != null) {
@@ -233,30 +233,30 @@ import java.math.BigInteger;
                             format.connect();
                             format.format(message);
                             disableWrite();
-                            return OnTagWriteListener.WRITE_OK;
+                     //       return OnTagWriteListener.WRITE_OK;
                         } catch (IOException e) {
                             disableWrite();
-                            return OnTagWriteListener.WRITE_ERROR_IO_EXCEPTION;
+                       //     return OnTagWriteListener.WRITE_ERROR_IO_EXCEPTION;
                         }
                     } else {
                         disableWrite();
-                        return OnTagWriteListener.WRITE_ERROR_BAD_FORMAT;
+                      //  return OnTagWriteListener.WRITE_ERROR_BAD_FORMAT;
                     }
                 }
             } catch (TagLostException e) {
                 disableWrite();
                 System.out.println("Failed to write. Tag out of range.");
-                return OnTagWriteListener.WRITE_ERROR_TAG_LOST;
+           //     return OnTagWriteListener.WRITE_ERROR_TAG_LOST;
             } catch (IOException e) {
                 disableWrite();
                 System.out.println("Failed to write. I/O Error");
-                return OnTagWriteListener.WRITE_ERROR_IO_EXCEPTION;
+           //     return OnTagWriteListener.WRITE_ERROR_IO_EXCEPTION;
             } catch (FormatException e) {
                 disableWrite();
                 System.out.println("Failed to write. Tag unformatable!");
-                return OnTagWriteListener.WRITE_ERROR_BAD_FORMAT;
+            //    return OnTagWriteListener.WRITE_ERROR_BAD_FORMAT;
             }
-
+            return 0;
         }
 
         public void enableWrite() {
@@ -265,7 +265,7 @@ import java.math.BigInteger;
                 if (this.mWriteNdef != null) {
                     this.WriteMode = true;
 
-                    MainActivity.dialogAnimation = new AlertDialogAnimation(caller, AlertDialog.THEME_HOLO_LIGHT);
+                    MainActivity.dialogAnimation = new AlertDialogAnimation(caller, AlertDialog.THEME_HOLO_LIGHT, null);
                     MainActivity.dialogAnimation.loadNFCAnimation();
                     MainActivity.dialogAnimation.startAnimation();
                 } else {

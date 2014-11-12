@@ -10,23 +10,29 @@ package gtsoffenbach.tourdegts_adminapp;
     import android.view.View;
     import android.view.animation.Animation;
     import android.view.animation.TranslateAnimation;
+    import android.widget.Button;
     import android.widget.ImageView;
 
     import java.util.ArrayList;
 
-    public class AlertDialogAnimation extends AlertDialog {
+    public class AlertDialogAnimation extends AlertDialog implements Button.OnClickListener{
         private Animation animation;
         private ArrayList<ImageView> images = new ArrayList<ImageView>();
         private View view;
+        private Button btnAbbrechen;
+        private nfcManager nfcManager;
 
-        AlertDialogAnimation(Activity caller, int THEME) {
+        AlertDialogAnimation(Activity caller, int THEME, nfcManager nfcManager) {
             super(caller, THEME);
+            this.nfcManager = nfcManager;
 
             animation = new TranslateAnimation(0, -230, 0, 0);
             animation.setDuration(1800);
             animation.setRepeatCount(Animation.INFINITE);
             LayoutInflater inflater = (LayoutInflater) caller.getSystemService(caller.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.dialog_wanimation, null);
+            btnAbbrechen = (Button) view.findViewById(R.id.btnAbbrechen);
+            btnAbbrechen.setOnClickListener(this);
             setTitle("NFC Tag beschreiben");
             setView(view);
             setCancelable(false);
@@ -56,6 +62,11 @@ package gtsoffenbach.tourdegts_adminapp;
             animation.cancel();
             images.clear();
             this.dismiss();
+        }
+
+        @Override
+        public void onClick(View v) {
+          this.nfcManager.cancelWrite();
         }
     }
 

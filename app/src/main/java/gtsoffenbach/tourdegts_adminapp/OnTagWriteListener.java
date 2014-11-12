@@ -5,14 +5,27 @@ package gtsoffenbach.tourdegts_adminapp;
  */
 public class OnTagWriteListener {
 
-        public static final int WRITE_OK = 0;
+/*
+        public static final int READ_WRITE_OK = 0;
         public static final int WRITE_ERROR_READ_ONLY = 1;
         public static final int WRITE_ERROR_CAPACITY = 2;
         public static final int WRITE_ERROR_BAD_FORMAT = 3;
         public static final int WRITE_ERROR_IO_EXCEPTION = 4;
         public static final int WRITE_ERROR_TAG_LOST = 5;
+        public static final int WRITE_UNKNOWN_ERROR = 6;
 
-        public static String onTagWrite(int status) {
+       public static final int READ_ERROR_IO_EXCEPTION = 10;
+    public static final int READ_ERROR_TAG_LOST = 11;
+    public static final int READ_UNKNOWN_ERROR = 12;
+    public static final int READ_UNKNOWN_TAGDATA = 13;
+
+
+
+
+
+
+
+    public static String onTagWrite(int status) {
             switch (status) {
                 case 0:
                     return "WRITE_OK";
@@ -29,5 +42,9 @@ public class OnTagWriteListener {
             }
             return null;
         }
+
+    */
     }
+
+
 
