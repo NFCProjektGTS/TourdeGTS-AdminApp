@@ -21,7 +21,7 @@ public class TagItemMagazine {
 
 
         tagItems.add(new StartTagItem());
-        tagItems.add(new TagItem("Test01 Tag","Dies ist ein Test Tag(1).",1));
+        //tagItems.add(new TagItem("Test01 Tag","Dies ist ein Test Tag(1).",1));
         tagItems.add(new TagItem("Test02 Tag","Dies ist ein Test Tag(2).",2));
         tagItems.add(new TagItem("Test03 Tag","Dies ist ein Test Tag(3).",3));
         tagItems.add(new TagItem("Test04 Tag","Dies ist ein Test Tag(4).",4));

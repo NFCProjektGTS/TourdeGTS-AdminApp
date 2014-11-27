@@ -4,7 +4,7 @@ package gtsoffenbach.tourdegts_adminapp;
  * Created by Marlon on 05.07.2014.
  */
 public class StartTagItem extends TagItem {
-    private String address="gtsoffenbach.nfcgamespieler_appprototype";
+    private String address="gtsoffenbach.tourdegts";
 
 
     public StartTagItem() {
