@@ -21,16 +21,16 @@ public class TagItemMagazine {
 
 
         tagItems.add(new StartTagItem());
-        tagItems.add(new TagItem("Test01 Tag","Dies ist ein Test Tag(1).",1));
-        tagItems.add(new TagItem("Test02 Tag","Dies ist ein Test Tag(2).",2));
-        tagItems.add(new TagItem("Test03 Tag","Dies ist ein Test Tag(3).",3));
-        tagItems.add(new TagItem("Test04 Tag","Dies ist ein Test Tag(4).",4));
-        tagItems.add(new TagItem("Test05 Tag","Dies ist ein Test Tag(5).",5));
-        tagItems.add(new TagItem("Test06 Tag","Dies ist ein Test Tag(6).",6));
-        tagItems.add(new TagItem("Test07 Tag","Dies ist ein Test Tag(7).",7));
-        tagItems.add(new TagItem("Test08 Tag","Dies ist ein Test Tag(8).",8));
-        tagItems.add(new TagItem("Test09 Tag","Dies ist ein Test Tag(9).",9));
-        tagItems.add(new TagItem("Test10 Tag","Dies ist ein Test Tag(10).",10));
+        tagItems.add(new TagItem("Info/Empfang Tag","Empfang am Hauteingang mit Informationen über die Schule.",1));
+        tagItems.add(new TagItem("DSFinfo Tag","Hier gibt es Informationen zur DSF",2));
+        tagItems.add(new TagItem("Mechatronik Tag","Kompetenzcheck zur Arbeit eines Mechatronikers mit Beispielen aus der Messtechnik und der Steuerungstechnik sollen die Schüler Einblicke in mechatronische Systeme bekommen.",3));
+        tagItems.add(new TagItem("Schaltungen Tag","Elektrische Schaltungen werden Präsentiert von Herr Höhm.",4));
+        tagItems.add(new TagItem("MatheImBG Tag","Vorstellung der Themen die in der Oberstufe unterrichtet werden. Mit unteranderem einem kleinen Kenntnis Test im Bereich Mathe und der Vorstellung von Geogebra.",5));
+        tagItems.add(new TagItem("TaschenrechnerTag","Programmierung eines Taschenrechners in JavaScript der z.B. Berechnungen, wie Addieren oder Nullstellenfindung, im Browser ausführt. ",6));
+        tagItems.add(new TagItem("Mechaniker Tag","Industriemechanik an der GTS wird vorgestellt.",7));
+        tagItems.add(new TagItem("Sport Tag","Aufgebaute Slackline und Schüler Präsentationen über den Ski- und Snowboardkurs.",8));
+        tagItems.add(new TagItem("Präsentation Tag","Präsentationen des Informatik Leistungskurses",9));
+        tagItems.add(new TagItem("MatheMinigame Tag","Das Mathe Minigame.",10));    //hat das Minigame auch einen Tag?
 
     }
 
