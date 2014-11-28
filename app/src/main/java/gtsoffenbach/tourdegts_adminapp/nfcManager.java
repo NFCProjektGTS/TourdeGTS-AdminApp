@@ -253,7 +253,15 @@ public class nfcManager implements MainActivity.ActivityLifeCycleListener {
 
     }
 
+    @Override
+    public NdefMessage[] NoNDEFContent(Intent intent) {
+        return new NdefMessage[0];
+    }
 
+    @Override
+    public byte[] rawTagData(Parcelable parc) {
+        return new byte[0];
+    }
 
 
     /*
@@ -287,18 +295,18 @@ public class nfcManager implements MainActivity.ActivityLifeCycleListener {
 
     private NdefMessage createNdefMessage(){
         try {
-        NdefRecord newRecord = null;
+            NdefRecord newRecord = null;
 
-        if(tagItem instanceof StartTagItem){
+            if(tagItem instanceof StartTagItem){
 
-           String appname = ((StartTagItem) tagItem).getAddress();
-           newRecord = NdefRecord.createApplicationRecord(appname);
+                String appname = ((StartTagItem) tagItem).getAddress();
+                newRecord = NdefRecord.createApplicationRecord(appname);
 
-        }else {
+            }else {
 
-            newRecord = new NdefRecord(
-                    this.tagItem.getNfcTnf(), this.tagItem.getNfcType(), new byte[0], new byte[0]);
-        }
+                newRecord = new NdefRecord(
+                        this.tagItem.getNfcTnf(), this.tagItem.getNfcType(), new byte[0], new byte[0]);
+            }
             NdefRecord[] records = new NdefRecord[]{newRecord};
             return new NdefMessage(records);
 
@@ -436,13 +444,13 @@ public class nfcManager implements MainActivity.ActivityLifeCycleListener {
     *
      */
     public static int byteArrayToInt(byte[] byteArray){
-       int value = 0;
-       for (int i = 0; i<4; i++){
-           int shift = (3-i)*8;
-           value += (byteArray[i]& 0x000000FF)<< shift;
-       }
+        int value = 0;
+        for (int i = 0; i<4; i++){
+            int shift = (3-i)*8;
+            value += (byteArray[i]& 0x000000FF)<< shift;
+        }
 
-       return value;
+        return value;
     }
 
     public static byte[] intToByteArray(int a){

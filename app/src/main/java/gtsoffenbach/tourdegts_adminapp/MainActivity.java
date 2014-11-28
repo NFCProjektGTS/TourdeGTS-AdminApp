@@ -1,7 +1,9 @@
 package gtsoffenbach.tourdegts_adminapp;
 
 import android.content.Intent;
+import android.nfc.NdefMessage;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -16,7 +18,8 @@ public class MainActivity extends ActionBarActivity {
         public void onActivityResume();
         public void onActivityPause();
         public void onActivityNewIntent(Intent intent);
-
+        public NdefMessage[] NoNDEFContent(Intent intent);
+        public byte[] rawTagData(Parcelable parc);
     }
 
     private ActivityLifeCycleListener activityLifeCycleListener = null;
